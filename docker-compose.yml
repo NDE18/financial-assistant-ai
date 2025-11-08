@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: financial-backend
+    ports:
+      - "8000:8000"
+    environment:
+      # Adjust according to your FastAPI settings
+      - ALLOW_ORIGINS=http://localhost,http://localhost:5173,http://localhost:8080
+      - JWT_SECRET=${JWT_SECRET:-devsecret}
+      - JWT_ALGO=HS256
+      # - DATABASE_URL=sqlite:///./app.db
+      # - OPENAI_API_KEY=${OPENAI_API_KEY}
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        VITE_API_URL: http://localhost:8000
+    container_name: financial-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+# Uncomment to persist data with SQLite by mapping the backend working directory
+# volumes:
+#   backend_data:
+#     driver: local

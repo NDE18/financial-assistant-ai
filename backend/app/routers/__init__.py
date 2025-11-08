@@ -1,0 +1,13 @@
+from .transactions import router as transactions
+from .budgets import router as budgets
+from .reports import router as reports
+from .analysis import router as analysis
+from .reconciliation import router as reconciliation
+from .documents import router as documents
+from .notifications import router as notifications
+from .treasury import router as treasury
+from .auth import router as auth
+from .invoices import router as invoices
+from .fx import router as fx
+from .users import router as users
+from .search import router as search

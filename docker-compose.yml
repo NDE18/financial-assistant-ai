@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile.backend
     container_name: financial-backend
     network_mode: bridge
+    working_dir: /app/backend
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
     ports:
       - "8000:8000"
     environment:
@@ -14,6 +16,7 @@ services:
       - ALLOW_ORIGINS=${ALLOW_ORIGINS:-http://localhost,http://localhost:5173}
       - JWT_SECRET=${JWT_SECRET:-devsecret}
       - JWT_ALGO=${JWT_ALGO:-HS256}
+      - PYTHONPATH=/app/backend
       # - DATABASE_URL=${DATABASE_URL:-sqlite:///./app.db}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     restart: unless-stopped

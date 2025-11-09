@@ -1,4 +1,4 @@
-version: "3.8"
+name: financial-assistant-ai
 
 services:
   backend:
@@ -10,11 +10,11 @@ services:
       - "8000:8000"
     environment:
       # Adjust according to your FastAPI settings
-      - ALLOW_ORIGINS=http://localhost,http://localhost:5173,http://localhost:8080
+      - ALLOW_ORIGINS=${ALLOW_ORIGINS:-http://localhost,http://localhost:5173}
       - JWT_SECRET=${JWT_SECRET:-devsecret}
-      - JWT_ALGO=HS256
-      # - DATABASE_URL=sqlite:///./app.db
-      # - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - JWT_ALGO=${JWT_ALGO:-HS256}
+      # - DATABASE_URL=${DATABASE_URL:-sqlite:///./app.db}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     restart: unless-stopped
 
   frontend:
@@ -22,15 +22,10 @@ services:
       context: .
       dockerfile: Dockerfile.frontend
       args:
-        VITE_API_URL: http://localhost:8000
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
     container_name: financial-frontend
     ports:
       - "5173:80"
     depends_on:
       - backend
     restart: unless-stopped
-
-# Uncomment to persist data with SQLite by mapping the backend working directory
-# volumes:
-#   backend_data:
-#     driver: local

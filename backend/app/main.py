@@ -43,10 +43,21 @@ def on_startup():
     from sqlmodel import Session
     from .db import engine
     with Session(engine) as s:
+        from sqlmodel import select
+        from .services.security import verify_password
         def ensure(email, pwd, role):
-            from sqlmodel import select
-            if not s.exec(select(User).where(User.email==email)).first():
+            u = s.exec(select(User).where(User.email==email)).first()
+            if not u:
                 u = User(email=email, hashed_password=hash_password(pwd), role=role, is_active=True)
+                s.add(u)
+                s.commit()
+            else:
+                # Ensure role is correct
+                if u.role != role:
+                    u.role = role
+                # Ensure password hash is valid for the expected password (handles bcrypt->pbkdf2 migrations)
+                if not verify_password(pwd, u.hashed_password):
+                    u.hashed_password = hash_password(pwd)
                 s.add(u)
                 s.commit()
         ensure("admin@example.com", "Passw0rd!", "admin")

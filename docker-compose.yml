@@ -32,7 +32,5 @@ services:
 
 networks:
   default:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: ${COMPOSE_SUBNET:-172.30.0.0/16}
+    external: true
+    name: bridge

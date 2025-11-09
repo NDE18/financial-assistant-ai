@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile.backend
     container_name: financial-backend
+    network_mode: bridge
     ports:
       - "8000:8000"
     environment:
@@ -24,13 +25,10 @@ services:
       args:
         VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
     container_name: financial-frontend
+    network_mode: bridge
     ports:
       - "5173:80"
     depends_on:
       - backend
     restart: unless-stopped
 
-networks:
-  default:
-    external: true
-    name: bridge
